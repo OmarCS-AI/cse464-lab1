@@ -1,0 +1,27 @@
+name: CI Docker Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t competency-demo:latest .
+
+      - name: Run validation in container
+        run: docker run --rm competency-demo:latest
+
+  delivery-check:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Confirm delivery readiness
+        run: echo "Build and validation passed; the repository is ready for delivery."
